@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Parsing Data</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  	<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			li {
+				vertical-align: middle;
+				align-items: center;
+			}
+			li h2 {
+				margin-right: 0;
+			}
+			.right {
+				font-size: 12px;
+				float: right;
+				margin-left: auto;
+				text-align: right;
+			}
+			.mid{
+				float: left;	
+				margin-left: 30px;
+			}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div id="root" class="row"></div>
+	</div>
+	
+	<ul>
+		<template id="templates">
+			<li class="list-group-item w-100 float-left d-flex">
+					<h2 class="float-left"> {score} </h2>
+					<a href=""><p class="mid">{title}</p></a>
+					<p class="right">by :{by} </p>
+			</li>
+		</template> 
+	</ul>
+
+	</ul>
+</body>
+
+
+
+	<script>
+		var template = document.getElementById("templates").innerHTML;
+		var roots   = document.getElementById("root");
+		let temp = "";
+		let itemp = "";
+		var data = fetch("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty").then(async (result) => {
+			var data = await result.json();
+			data.forEach(async(item, index)=>{
+				itemp = "https://hacker-news.firebaseio.com/v0/item/" + data[index] +".json";
+					
+					
+					var datap = fetch(itemp).then(async (res) => {
+						datap = await res.json();
+						console.log(datap);
+						var title = itemp.title;
+						var url = itemp.url;
+						temp = temp + template
+						
+						.replace('{by}', datap["by"])
+						.replace('{score}', datap["score"])
+						.replace('{title}', datap["title"] )
+						.replace('{url}', datap["url"])
+						roots.innerHTML = temp;
+					});
+			    });
+				
+		}); 
+	</script>
+</html>
